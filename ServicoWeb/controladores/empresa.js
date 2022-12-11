@@ -2,7 +2,7 @@ const { pool } = require('../config');
 const { request, response } = require('express');
 
 const getEmpresa = (request, response) => {
-    pool.query('SELECT * from empresa order by id desc',
+    pool.query('SELECT * from empresa order by codigo desc',
         (error, results) => {
             if (error) {
                 return response.status(400).json({
@@ -15,10 +15,10 @@ const getEmpresa = (request, response) => {
 }
 
 const addEmpresa = (request, response) => {
-    const { cnpj, nome, razaosocial } = request.body;
+    const { cnpj, nome, razaosocial, sigla } = request.body;
 
-    pool.query('insert into empresa (cnpj, nome, razaosocial) values ($1,$2,$3) returning id, cnpj, nome, razaosocial',
-        [cnpj, nome, razaosocial],
+    pool.query('insert into empresa (cnpj, nome, razaosocial,sigla) values ($1,$2,$3,$4) returning codigo, cnpj, nome, razaosocial,sigla',
+        [cnpj, nome, razaosocial, sigla],
         (error, results) => {
             if (error) {
                 return response.status(400).json({
@@ -36,10 +36,10 @@ const addEmpresa = (request, response) => {
 }
 
 const updateEmpresa = (request, response) => {
-    const {id, nome, razaosocial, cnpj } = request.body;
-    pool.query(`UPDATE predios SET  nome=$1, razaosocial=$2, cnpj=$3
-	            WHERE id=$4 returning id, nome, razaosocial, cnpj`, 
-                [nome, razaosocial, cnpj, id] , 
+    const {codigo, nome, razaosocial, cnpj ,sigla} = request.body;
+    pool.query(`UPDATE empresa SET  nome=$1, razaosocial=$2, cnpj=$3, sigla=$4
+	            WHERE codigo=$5 returning codigo, nome, razaosocial, cnpj,sigla`, 
+                [nome, razaosocial, cnpj,sigla ,codigo] , 
     (error, results) => {
         if (error){
             return response.status(400).json({
@@ -55,9 +55,9 @@ const updateEmpresa = (request, response) => {
 }
 
 const deleteEmpresa = (request, response) => {
-    const id = parseInt(request.params.id);
-    pool.query(`DELETE FROM empresa WHERE id=$1`, 
-                [id] , 
+    const codigo = parseInt(request.params.codigo);
+    pool.query(`DELETE FROM empresa WHERE codigo=$1`, 
+                [codigo] , 
     (error, results) => {
         if (error || results.rowCount == 0){
             return response.status(400).json({
@@ -72,9 +72,9 @@ const deleteEmpresa = (request, response) => {
 }
 
 const getEmpresaPorCodigo = (request, response) => {
-    const id = parseInt(request.params.id);
-    pool.query(`SELECT * FROM empresa WHERE id=$1`, 
-                [id] , 
+    const codigo = parseInt(request.params.codigo);
+    pool.query(`SELECT * FROM empresa WHERE codigo=$1`, 
+                [codigo] , 
     (error, results) => {
         if (error || results.rowCount == 0){
             return response.status(400).json({

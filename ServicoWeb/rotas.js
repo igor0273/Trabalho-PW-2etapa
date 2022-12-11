@@ -19,7 +19,7 @@ rotas.route('/funcionario/:id')
 .get(controleFuncionario.getFuncionarioPorCodigo)
 .delete(controleFuncionario.deleteFuncionario)
 
-rotas.route('/empresa/:id')
+rotas.route('/empresa/:codigo')
 .get(controleEmpresa.getEmpresaPorCodigo)
 .delete(controleEmpresa.deleteEmpresa)
 
